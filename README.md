@@ -1,66 +1,173 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+✅ 1. Core Backend (Laravel)
+Multi-Tenant Support:
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+    *   All models include company_id for tenant isolation
 
-## About Laravel
+    *   Global scopes automatically filter by tenant
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+    *   TenantScope middleware enforces company isolation
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+    *   Database migrations include proper foreign keys and indexes
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Role-Based Access Control (RBAC):
 
-## Learning Laravel
+    *   User model with isOwner(), isManager(), isEmployee() methods
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    *   Policies for Project, Task, Company, ScrapedData models
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    *   Gates for specific permissions (view-dashboard, manage-users, etc.)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    *   Frontend Vue components show/hide UI elements based on roles
 
-## Laravel Sponsors
+API Endpoints:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    *   Complete CRUD for Projects and Tasks
 
-### Premium Partners
+    *   POST /tasks/{task}/assign-users for user assignment
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    *   GET /projects/{project}/tasks-all fetches all tasks with assigned users
 
-## Contributing
+    *   Proper authorization checks on all endpoints
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+✅ 2. Scraping & External Data Integration
+Scraper Service:
 
-## Code of Conduct
+    *   ScrapingService class with rate limiting and error handling
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    *   Scrapes from Hacker News (news) and Web Scraper Test Site (e-commerce)
 
-## Security Vulnerabilities
+    *   Fallback to test data if external sites fail
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    *   Structured data extraction (title, URL, description, price, date)
 
-## License
+Data Storage:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    *   scraped_data table with company_id for tenant linkage
+
+    *   JSON metadata field for flexible data storage
+
+    *   Proper indexing for performance
+
+API & Export:
+
+    *   GET /api/scraping - fetch scraped results
+
+    *   POST /api/scraping/scrape - initiate scraping
+
+    *   GET /api/scraping/export-csv - CSV export with proper formatting
+
+✅ 3. Events & Notifications
+Email Notifications:
+
+    *   TaskCompleted event triggered when task status changes to completed
+
+    *   SendTaskCompletedEmail job handles email sending via queue
+
+    *   Professional HTML email template
+
+    *   Queue system with retries and error handling
+
+    *   Queue Configuration:
+
+    *   Database queue driver configured
+
+    *   Failed jobs table for monitoring
+
+    *   Automatic retry logic with exponential backoff
+
+✅ 4. Frontend (Vue)
+Authentication:
+
+    *   Complete login/logout flow with JWT tokens
+
+    *   Vuex store for state management
+
+    *   Route guards for protected pages
+
+Dashboard:
+
+    *   Project and task statistics
+
+    *   Recent projects list
+
+    *   Task status breakdown charts
+
+    *   Real-time updates via polling
+
+Task Management:
+
+    *   Create, edit, delete tasks with role-based permissions
+
+    *   Assign users to tasks
+
+    *   Status updates with real-time feedback
+
+Scraping Interface:
+
+    *   Start scraping from different sources
+
+    *   Filter and search scraped data
+
+    *   CSV export functionality
+
+    *   Paginated results display
+✅ 5. Debugging Exercise
+Original Issue:
+
+        $tasks = Task::where('status', 'completed')->get();
+        foreach ($tasks as $task) {
+            echo $task->project->company->name;  // N+1 query problem
+        }
+
+Problem Identified:
+
+N+1 query issue - each loop iteration makes separate database queries
+
+Inefficient for large datasets
+
+Optimized Solution:
+
+        $tasks = Task::where('status', 'completed')
+                    ->with(['project.company'])  // Eager loading
+                    ->get();
+
+        foreach ($tasks as $task) {
+            echo $task->project->company->name;  // No additional queries
+        }
+
+✅ 6. Written Design Answers
+Scaling for 1000 Tenants with Millions of Tasks:
+
+    *   Database sharding by tenant or region
+
+    *   Redis caching for frequently accessed data
+
+    *   Read replicas for reporting queries
+
+    *   Horizontal scaling of queue workers
+
+    *   CDN for static assets
+
+    *   Strategic database indexing
+
+Tenant Data Isolation Approach:
+
+    *   Single Database with Scoping: All tables include company_id with global scopes
+
+    *   Multiple Databases: Separate database per tenant for maximum isolation
+
+    *   Hybrid Approach: Large tenants get dedicated DBs, small tenants share with scoping
+
+    *   Current Implementation: Single DB with robust application-level scoping
+
+Queue Monitoring Solution:
+
+    *   Laravel Horizon for Redis queue monitoring
+
+    *   Failed Jobs Table with automatic retry logic
+
+    *   Custom Alerts for stuck queues or high failure rates
+
+    *   Logging with job identifiers and performance metrics
+
+    *   Health Checks for queue worker status

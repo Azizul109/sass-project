@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +13,11 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        \App\Models\Project::class => \App\Policies\ProjectPolicy::class,
+        \App\Models\Task::class => \App\Policies\TaskPolicy::class,
+        \App\Models\Company::class => \App\Policies\CompanyPolicy::class,
+        \App\Models\ScrapedData::class => \App\Policies\ScrapedDataPolicy::class,
+        \App\Models\User::class => \App\Policies\UserPolicy::class,
     ];
 
     /**
@@ -21,6 +25,27 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->registerPolicies();
+
+        // Define additional gates for specific permissions
+        Gate::define('view-dashboard', function ($user) {
+            return $user->isEmployee();
+        });
+
+        Gate::define('manage-users', function ($user) {
+            return $user->isManager();
+        });
+
+        Gate::define('view-reports', function ($user) {
+            return $user->isManager();
+        });
+
+        Gate::define('export-data', function ($user) {
+            return $user->isEmployee();
+        });
+
+        Gate::define('configure-system', function ($user) {
+            return $user->isOwner();
+        });
     }
 }
