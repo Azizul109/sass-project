@@ -67,20 +67,4 @@ class ProjectPolicy
     {
         return $user->company_id === $project->company_id && $user->isOwner();
     }
-
-    /**
-     * Determine whether the user can manage project settings.
-     */
-    public function manageSettings(User $user, Project $project): bool
-    {
-        return $user->company_id === $project->company_id && $user->isManager();
-    }
-
-    /**
-     * Determine whether the user can export project data.
-     */
-    public function export(User $user, Project $project): bool
-    {
-        return $user->company_id === $project->company_id && $user->isManager();
-    }
 }

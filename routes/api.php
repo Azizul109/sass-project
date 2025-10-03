@@ -45,9 +45,29 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/export-csv', [ScrapingController::class, 'exportCsv']);
         });
         
-        // Dashboard
+        // Dashboard - FIXED with proper error handling
         Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
-            $company = $request->user()->company;
+            $user = $request->user();
+            
+            // Check if user has a company
+            if (!$user->company) {
+                return response()->json([
+                    'message' => 'User is not associated with any company',
+                    'stats' => [
+                        ['title' => 'Total Projects', 'value' => 0],
+                        ['title' => 'Active Tasks', 'value' => 0],
+                        ['title' => 'Completed Tasks', 'value' => 0],
+                    ],
+                    'recent_projects' => [],
+                    'task_status_data' => [
+                        'pending' => 0,
+                        'in_progress' => 0,
+                        'completed' => 0,
+                    ]
+                ], 200);
+            }
+            
+            $company = $user->company;
             
             return response()->json([
                 'stats' => [
